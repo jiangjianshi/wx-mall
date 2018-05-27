@@ -1,0 +1,59 @@
+<#include "../common/include.html"/>
+<title>房间图片审核列表</title>
+<script type="text/javascript" src="${basePath}/stat/approve/approve.js"></script>
+<script type="text/javascript" src="${basePath}/IncJs.a?c=image_status"></script>
+</head>
+<body class="easyui-layout" data-options="fit:true,border:false">
+	<div id="toolbar" style="display: none;">
+		<form id="searchForm">
+			<input type="hidden" id="flag" value="${appFlag!''}"/>
+			<table border="0">
+				<tr>
+					<td>图片审核状态:</td>
+					<td>
+						<input name="approveStatus" id="imageStatus" style="width: 110px;" />
+					</td>
+					<td>所属公司:</td>
+					<td>
+						<input name="companyName" id="companyName" class="easyui-textbox" style="width: 120px;" />
+					</td>
+					<td>小区名称:</td>
+					<td>
+						<input name="communityName" id="communityName" class="easyui-textbox" style="width: 120px;" />
+					</td>
+					<td>房源编号:</td>
+					<td>
+						<input name="sellId" id="sellId" class="easyui-textbox" style="width:120px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>图片评分:</td>
+					<td><input name="imageScoreFrom" id=""imageScoreFrom"" class="easyui-textbox" style="width: 45px;" />&nbsp到
+					<input name="imageScoreTo" id=""imageScoreTo"" class="easyui-textbox" style="width: 45px;" /></td>
+					<td>新增日期:</td>
+					<td>
+						<input class="easyui-datebox" name="createDate" id="createDate" style="width: 120px;" />
+					</td>
+					<td>审核日期:</td>
+					<td>
+						<input class="easyui-datebox" name="approveDate" id="approveDate" style="width: 120px;" />
+					</td>
+					<td colspan="2" style="padding-left:5px;"><a id="btn"
+						href="javascript:opt.search();" class="easyui-linkbutton"
+						data-options="iconCls:'icon-search'" style="width: 80px;">查询</a>
+						<a id="btn"
+						href="javascript:opt.resetSearch();" class="easyui-linkbutton"
+						data-options="iconCls:'icon-redo'" style="width: 80px; margin-left:10px;">重置</a>
+					</td>
+					<!-- <td style="padding-left: 10px;"><a id="btn"
+						href="javascript:opt.resetSearch();" class="easyui-linkbutton"
+						data-options="iconCls:'icon-redo'" style="width: 80px;">重置</a></td> -->
+				</tr>
+			</table>
+		</form>
+	</div>
+	<div data-options="region:'center',fit:true,border:false">
+		<table id="dataGrid" data-options="fit:true, border:false"></table>
+	</div>
+</body>
+</html>

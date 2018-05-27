@@ -1,0 +1,179 @@
+<#include "../../common/include.html"/>
+<title>编辑房源</title>
+<script type="text/javascript" src="${basePath}/stat/approve/house/approveEdit.js"></script>
+<style>
+.img_list {
+	float: left;
+	margin-left: 15px;
+}
+
+img {
+	width: 300px;
+	height: 200px;
+	border-radius: 5px;
+}
+
+.img-cover{    
+    opacity: 0.2;        /*控制覆盖物的透明度*/
+    background-color: #A0A0A0;  /*覆盖物的颜色*/
+    -moz-filter: blur(3px);
+    -webkit-filter: blur(3px);
+    -o-filter: blur(3px);
+    -ms-filter: blur(3px);
+    filter: blur(3px);
+}   
+
+fieldset{
+	border:1px solid #abcdef;
+	border-radius: 5px;
+}
+</style>
+</head>
+<body id="layout" class="easyui-layout" style="overflow: auto">
+	<form id="editForm">
+	<fieldset form="editForm">
+	<legend><strong>房间基础信息</strong></legend>
+		<div>
+			<span>销售编号:</span>
+			<span>${vo.detail.houseSellId}</span>&nbsp&nbsp&nbsp&nbsp
+			<input id="houseSellId" hidden="true" value="${vo.detail.houseSellId}"/>
+			<span>房间编号:</span>
+			<span id="roomId">无</span>&nbsp&nbsp&nbsp&nbsp
+			<span>中介名称:</span>
+			<span id="source">${vo.detail.source!''}</span>&nbsp&nbsp&nbsp&nbsp
+			<a href="${detailUrl!''}">详情链接</a>
+			<span id="source">${detailUrl!''}</span>
+		</div>
+	</fieldset>
+	</form>
+	
+	<fieldset>
+		<legend><strong>图片信息</strong></legend>
+		<#list vo.imgsList as img>
+			<div class="img_list">
+				<span>图片ID: ${img.id?c!''}</span>
+				<div>
+					<#if img.isDelete==2> 
+						<img alt="${img.picRootPath !'无链接'}" src="${img.picRootPath}" class="img-cover">
+					<#else> 
+						<img alt="${img.picRootPath !'无链接'}" src="${img.picRootPath}">
+					</#if>
+				</div>
+				<div>
+					<#if img.isDelete==2> 
+						<input name="validImg" value="${img.id?c!''}" type="checkbox">
+					<#else> 
+						<input name="validImg" value="${img.id?c!''}" type="checkbox" checked="checked">
+					</#if>
+					<span>保留</span>
+					<#if img.isDefault==1> 
+						<input name="firstImg" type="radio" value="${img.id?c!''}" checked="checked">
+					<#else> 
+						<input name="firstImg" type="radio" value="${img.id?c!''}">
+					</#if>
+					<span>首图</span>
+				</div>
+			</div>
+		</#list>
+	</fieldset>
+	<fieldset>
+		<legend><strong>审批</strong></legend>
+			<div>
+				<table border="0">
+					<tr>
+						<td>准入度:</td>
+						<td>
+							<#if vo.imgsList?size gt 0 >
+								<input id="access" name="access" value="0" type="checkbox" />
+							<#else>
+								<input id="access" name="access" value="0" type="checkbox" checked="checked"/>
+							</#if>
+							<span>无图片</span>
+						</td>
+					</tr>
+					<tr>
+						<td>装修度:</td>
+						<td>
+							<input name="decoration" value="2"  type="radio" />
+							<span>无装修、破旧</span>
+						</td>
+						<td>
+							<input name="decoration" value="6" type="radio" />
+							<span>简装</span>
+						</td>
+						<td>
+							<input name="decoration" value="10" type="radio" />
+							<span>精装、豪装</span>
+						</td>
+					</tr>
+					<tr>
+						<td>重复度:</td>
+						<td>
+							<#if vo.isRepeat==2> 
+								<input name="repeat" value="2" type="radio" checked/>
+							<#else> 
+								<input name="repeat" value="2" type="radio" />
+							</#if>
+							<span>全部重复</span>
+						</td>
+						<td>
+							<#if vo.isRepeat==1> 
+								<input name="repeat" value="6" type="radio" checked/>
+							<#else> 
+								<input name="repeat" value="6" type="radio" />
+							</#if>
+							<span>部分重复</span>
+						</td>
+						<td>
+							<input name="repeat" value="10" type="radio" />
+							<span>无重复</span>
+						</td>
+					</tr>
+					<tr>
+						<td>拍摄度:</td>
+						<td>
+							<input name="shooting" value="2" type="radio" />
+							<span>较差</span>
+						</td>
+						<td>
+							<input name="shooting" value="6" type="radio" />
+							<span>一般</span>
+						</td>
+						<td>
+							<input name="shooting" value="10" type="radio" />
+							<span>良好</span>
+						</td>
+					</tr>
+					<tr>
+						<td>覆盖度:</td>
+						<td>
+							<input name="cover" value="4" type="checkbox" />
+							<span>卧室</span>
+						</td>
+						<td>
+							<input name="cover" value="3" type="checkbox" />
+							<span>厕所</span>
+						</td>
+						<td>
+							<input name="cover" value="2" type="checkbox" />
+							<span>厨房</span>
+						</td>
+						<td>
+							<input name="cover" value="1" type="checkbox" />
+							<span>客厅等其他</span>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<input class="easyui-textbox" id="approveDesc" label="备注" labelPosition="top" multiline="true" value="${rec.approveDesc!''}" style="width:65%;height:120px">
+	</fieldset>
+				
+	<div style="padding: 10px 10px;">
+		<center>
+			<a id="btn_pass" style=" width:100px;" href="javascript:opt.save('3')" class="easyui-linkbutton" data-options="iconCls:'icon-ok'">通过</a>
+			<a id="btn_reject" style=" width:100px;" href="javascript:opt.save('4')" class="easyui-linkbutton" data-options="iconCls:'icon-no'">不通过</a>
+			<a id="btn_close" style=" width:100px;" href="javascript:opt.close()" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">关闭</a>
+		</center> 
+	</div>
+</body>
+</html>

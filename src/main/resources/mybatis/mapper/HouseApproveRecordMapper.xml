@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hfq.house.manager.mapper.HouseApproveRecordMapper">
+
+
+	<sql id="columns">
+		a.id,
+		a.f_house_sell_id,
+		a.f_room_id,
+		a.f_operator,
+		a.f_error_reason,
+		a.f_image_status,
+		a.f_image_score,
+		a.f_approve_desc,
+		a.f_status,
+		a.f_approve_date,
+		a.f_creation_date,
+		a.f_last_change_date
+	</sql>
+	<!--查询结果集 -->
+	<resultMap id="beanMap" type="com.hfq.house.manager.entity.model.HouseApproveRecord">
+		<result property="id" column="id"/>
+		<result property="houseSellId" column="f_house_sell_id"/>
+		<result property="roomId" column="f_room_id"/>
+		<result property="operator" column="f_operator"/>
+		<result property="errorReason" column="f_error_reason"/>
+		<result property="imageStatus" column="f_image_status"/>
+		<result property="imageScore" column="f_image_score"/>
+		<result property="approveDesc" column="f_approve_desc"/>
+		<result property="status" column="f_status"/>
+		<result property="approveDate" column="f_approve_date"/>
+		<result property="creationDate" column="f_creation_date"/>
+		<result property="lastChangeDate" column="f_last_change_date"/>
+	</resultMap>
+	
+	<!-- 查询有图片的房间 -->
+	<select id="selectAllRoomHasImg" resultType="com.hfq.house.manager.entity.dto.ApproveDto">
+		select a.id roomId, a.f_house_sell_id sellId,a.f_approve_status as imageStatus , c.f_image_score as imageScore,
+		a.f_creation_date  as createDate, c.f_approve_date as approveDate
+		from t_room_base a left join (select * from t_house_approve_record r where r.f_status = 1 ) c 
+		on a.id = c.f_room_id and a.f_house_sell_id = c.f_house_sell_id, t_house_detail d,
+		(select count(p.f_house_sell_id) imgcount, p.f_room_id from t_house_pics p where p.f_is_delete !=1 group by f_room_id) b
+		where a.id = b.f_room_id and a.f_house_sell_id = d.f_house_sell_id and b.imgcount > 0 
+		<if test="vo.approveStatus == null ">
+				and a.f_approve_status in(1,3,4)
+		</if>
+		<if test="vo.approveStatus != null ">
+				and a.f_approve_status = #{vo.approveStatus} 
+		</if>
+		<if test="vo.companyName != null ">
+				and d.f_source like concat('%',concat(#{vo.companyName},'%'))
+		</if>
+		<if test="vo.sellId != null ">
+				and a.f_house_sell_id = #{vo.sellId}
+		</if>
+		<if test="vo.communityName != null ">
+				and d.f_community_name like concat('%',concat(#{vo.communityName},'%'))
+		</if>
+		<if test="vo.imageScoreFrom != null and vo.imageScoreTo != null">
+				and c.f_image_score BETWEEN #{vo.imageScoreFrom} and #{vo.imageScoreTo}
+		</if>
+		<if test="vo.createDate != null ">
+				and date(a.f_creation_date) = #{vo.createDate}
+		</if>
+		<if test="vo.approveDate != null ">
+				and date(c.f_approve_date) = #{vo.approveDate} 
+		</if>
+		order by a.f_creation_date desc
+	</select>
+	
+	<!-- 查询有图片的房源 -->
+	<select id="selectAllHouseHasImg" resultType="com.hfq.house.manager.entity.dto.ApproveDto">
+		select 0 roomId, a.f_house_sell_id sellId,a.f_approve_status as imageStatus , c.f_image_score as imageScore, 
+		a.f_creation_date  as createDate, c.f_approve_date as approveDate
+		from t_house_detail a left join (select * from t_house_approve_record r where r.f_status = 1 ) c on a.f_house_sell_id = c.f_house_sell_id,
+		(select count(p.f_house_sell_id) imgcount, p.f_house_sell_id from t_house_pics p where p.f_is_delete !=1 group by f_house_sell_id) b
+		where a.f_house_sell_id = b.f_house_sell_id and a.f_entire_rent = 1 and b.imgcount > 0 
+		<if test="vo.approveStatus == null ">
+				and a.f_approve_status in(1,3,4)
+		</if>
+		<if test="vo.approveStatus != null ">
+				and a.f_approve_status = #{vo.approveStatus} 
+		</if>
+		<if test="vo.companyName != null ">
+				and a.f_source like concat('%',concat(#{vo.companyName},'%'))
+		</if>
+		<if test="vo.sellId != null ">
+				and a.f_house_sell_id = #{vo.sellId}
+		</if>
+		<if test="vo.communityName != null ">
+				and a.f_community_name like concat('%',concat(#{vo.communityName},'%'))
+		</if>
+		<if test="vo.imageScoreFrom != null and vo.imageScoreTo != null">
+				and c.f_image_score BETWEEN #{vo.imageScoreFrom} and #{vo.imageScoreTo}
+		</if>
+		<if test="vo.createDate != null ">
+				and date(a.f_creation_date) = #{vo.createDate}
+		</if>
+		<if test="vo.approveDate != null ">
+				and date(c.f_approve_date) = #{vo.approveDate} 
+		</if>
+		order by a.f_creation_date desc
+	</select>
+	
+	<!-- 查询数量 -->
+	<select id="selectRecordCount" resultType="int">
+		select count(1) from t_house_approve_record a 
+		where a.f_operator !='sys' and a.f_house_sell_id=#{houseSellId} and a.f_room_id =#{roomId}
+	</select>
+	
+	
+	<select id="selectBySellIdAndRoomId" resultMap="beanMap">
+		select <include refid="columns" /> from t_house_approve_record a 
+		where  a.f_house_sell_id=#{houseSellId} and a.f_room_id =#{roomId} and a.f_status = 1 and a.f_operator != 'sys'
+	</select>
+	
+	<!-- 根据主键查询 -->
+	<select id="selectByPrimaryKey" resultMap="beanMap">
+		select
+		<include refid="columns" />
+		from t_house_approve_record a
+		where a.id = #{id}
+	</select>
+	
+	<!-- 保存 -->
+	<insert id="save"  useGeneratedKeys="true" keyProperty="vo.id">
+	  insert into t_house_approve_record(f_house_sell_id, f_room_id,f_operator,f_image_status,f_image_score,f_approve_desc,f_status) 
+	  values(#{vo.houseSellId}, #{vo.roomId},#{vo.operator}, #{vo.imageStatus},#{vo.imageScore}, #{vo.approveDesc}, #{vo.status})
+	</insert>
+
+	<!-- 选择更新 -->
+	<update id="updateSelective" parameterType="com.hfq.house.manager.entity.model.HouseApproveRecord">
+		UPDATE t_house_approve_record a
+		<trim prefix="set" suffixOverrides=",">
+			<if test="vo.houseSellId != null"> a.f_house_sell_id = #{vo.houseSellId},</if>
+			<if test="vo.roomId != null"> a.f_room_id = #{vo.roomId},</if>
+			<if test="vo.operator != null"> a.f_operator = #{vo.operator},</if>
+			<if test="vo.errorReason != null"> a.f_error_reason = #{vo.errorReason},</if>
+			<if test="vo.imageStatus != null"> a.f_image_status = #{vo.imageStatus},</if>
+			<if test="vo.imageScore != null"> a.f_image_score = #{vo.imageScore},</if>
+			<if test="vo.approveDesc != null"> a.f_approve_desc = #{vo.approveDesc},</if>
+			<if test="vo.status != null"> a.f_status = #{vo.status},</if>
+			<if test="vo.approveDate != null"> a.f_approve_date = #{vo.approveDate},</if>
+		</trim>
+		WHERE a.id = #{vo.id}
+	</update>
+</mapper>

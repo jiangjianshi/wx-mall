@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hfq.house.manager.mapper.HouseRankScoreMapper">
+
+
+	<sql id="columns">
+		a.id,
+		a.f_house_sell_id,
+		a.f_room_id,
+		a.f_source_score,
+		a.f_pic_score,
+		a.f_base_info_score,
+		a.f_subway_score,
+		a.f_img_deco_score,
+		a.f_img_repeat_score,
+		a.f_img_shooting_score,
+		a.f_img_cover_score,
+		a.f_img_total_score,
+		a.f_creation_date,
+		a.f_last_change_date
+	</sql>
+	<!--查询结果集 -->
+	<resultMap id="beanMap"
+		type="com.hfq.house.manager.entity.model.HouseRankScore">
+		<result property="id" column="id" />
+		<result property="houseSellId" column="f_house_sell_id" />
+		<result property="roomId" column="f_room_id" />
+		<result property="sourceScore" column="f_source_score" />
+		<result property="picScore" column="f_pic_score" />
+		<result property="baseInfoScore" column="f_base_info_score" />
+		<result property="subwayScore" column="f_subway_score" />
+		<result property="imgDecoScore" column="f_img_deco_score" />
+		<result property="imgRepeatScore" column="f_img_repeat_score" />
+		<result property="imgShootingScore" column="f_img_shooting_score" />
+		<result property="imgCoverScore" column="f_img_cover_score" />
+		<result property="imgTotalScore" column="f_img_total_score" />
+		<result property="creationDate" column="f_creation_date" />
+		<result property="lastChangeDate" column="f_last_change_date" />
+	</resultMap>
+
+	<!-- 根据主键查询 -->
+	<select id="selectByPrimaryKey" resultMap="beanMap">
+		select
+		<include refid="columns" />
+		from t_house_rank_score a
+		where a.id = #{id}
+	</select>
+	
+	<!-- 查询房源是否已有分项分 -->
+	<select id="selectBySellIdAndRoomId" resultMap="beanMap">
+		select
+		<include refid="columns" />
+		from t_house_rank_score a
+		<where>
+			<if test="houseSellId!= null ">
+				a.f_house_sell_id=#{houseSellId}
+			</if>
+			<if test="roomId != null">
+				and a.f_room_id=#{roomId}
+			</if>
+		</where>
+	</select>
+
+	<!-- 保存 -->
+	<insert id="saveImgScore" useGeneratedKeys="true" keyProperty="vo.id">
+		insert
+		into t_house_rank_score (f_house_sell_id,
+		f_room_id,f_img_deco_score,f_img_repeat_score,f_img_shooting_score,f_img_cover_score,f_img_total_score)
+		values (#{vo.houseSellId}, #{vo.roomId},#{vo.imgDecoScore },
+		#{vo.imgRepeatScore},#{vo.imgShootingScore}, #{vo.imgCoverScore},
+		#{vo.imgTotalScore})
+	</insert>
+
+	<!-- 选择更新 -->
+	<update id="updateSelective"
+		parameterType="com.hfq.house.manager.entity.model.HouseRankScore">
+		UPDATE t_house_rank_score a
+		<trim prefix="set" suffixOverrides=",">
+			<if test="vo.houseSellId != null"> a.f_house_sell_id = #{vo.houseSellId},</if>
+			<if test="vo.roomId != null"> a.f_room_id = #{vo.roomId},</if>
+			<if test="vo.sourceScore != null"> a.f_source_score = #{vo.sourceScore},</if>
+			<if test="vo.picScore != null"> a.f_pic_score = #{vo.picScore},</if>
+			<if test="vo.baseInfoScore != null"> a.f_base_info_score = #{vo.baseInfoScore},</if>
+			<if test="vo.subwayScore != null"> a.f_subway_score = #{vo.subwayScore},</if>
+			<if test="vo.imgDecoScore != null"> a.f_img_deco_score = #{vo.imgDecoScore},</if>
+			<if test="vo.imgRepeatScore != null"> a.f_img_repeat_score = #{vo.imgRepeatScore},</if>
+			<if test="vo.imgShootingScore != null"> a.f_img_shooting_score = #{vo.imgShootingScore},</if>
+			<if test="vo.imgCoverScore != null"> a.f_img_cover_score = #{vo.imgCoverScore},</if>
+			<if test="vo.imgTotalScore != null"> a.f_img_total_score = #{vo.imgTotalScore},</if>
+			<if test="vo.creationDate != null"> a.f_creation_date = #{vo.creationDate},</if>
+			<if test="vo.lastChangeDate != null"> a.f_last_change_date = #{vo.lastChangeDate},</if>
+		</trim>
+		WHERE a.id = #{vo.id}
+	</update>
+</mapper>

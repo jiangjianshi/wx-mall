@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hfq.house.manager.mapper.CompanyWhiteListMapper">
+
+
+	<sql id="columns">
+		a.f_id,
+		a.f_source,
+		a.f_app_id,
+		a.f_company_id,
+		a.f_company_name,
+		a.f_white_desc,
+		a.f_status,
+		a.f_white_count,
+		a.f_create_time,
+		a.f_update_time
+	</sql>
+	<!--查询结果集 -->
+	<resultMap id="beanMap" type="com.hfq.house.manager.entity.model.CompanyWhiteList">
+		<result property="id" column="f_id"/>
+		<result property="source" column="f_source"/>
+		<result property="appId" column="f_app_id"/>
+		<result property="companyId" column="f_company_id"/>
+		<result property="companyName" column="f_company_name"/>
+		<result property="whiteDesc" column="f_white_desc"/>
+		<result property="status" column="f_status"/>
+		<result property="whiteCount" column="f_white_count"/>
+		<result property="createTime" column="f_create_time"/>
+		<result property="updateTime" column="f_update_time"/>
+	</resultMap>
+
+		<!-- 分页查询房源列表 -->
+	<select id="selectByPage" resultMap="beanMap">
+		select
+		<include refid="columns" />
+		from t_company_white_config a 
+ 		<where>
+			<if test="companyName!= null ">
+				and a.f_company_name = #{companyName}
+			</if>
+			<if test="companyId != null">
+				and a.f_company_id = #{companyId}
+			</if>
+		</where>
+		order by a.f_create_time desc
+	</select>
+	
+	
+	<select id="selectWhiteCompanyIds" resultType="java.lang.String">
+		select a.f_company_id as companyId from t_company_white_config a where a.f_status = 1
+	</select>
+	
+	
+	<select id="selectById" resultMap="beanMap">
+		select
+		<include refid="columns" />
+		from t_company_white_config a  where a.f_company_id = #{companyId}
+	</select>
+
+	<!-- 选择更新 -->
+	<update id="updateSelective" parameterType="com.hfq.house.manager.entity.model.CompanyWhiteList">
+		UPDATE t_company_white_config a
+		<trim prefix="set" suffixOverrides=",">
+			<if test="vo.source != null"> a.f_source = #{vo.source},</if>
+			<if test="vo.appId != null"> a.f_app_id = #{vo.appId},</if>
+			<if test="vo.companyId != null"> a.f_company_id = #{vo.companyId},</if>
+			<if test="vo.companyName != null"> a.f_company_name = #{vo.companyName},</if>
+			<if test="vo.whiteDesc != null"> a.f_white_desc = #{vo.whiteDesc},</if>
+			<if test="vo.status != null"> a.f_status = #{vo.status},</if>
+		</trim>
+		WHERE a.f_id = #{vo.id}
+	</update>
+	
+	<!-- 更新状态 -->
+	<update id="updateStatusByCompanyId">
+		UPDATE t_company_white_config a set a.f_status = #{status} WHERE a.f_company_id = #{companyId}
+	</update>
+	
+	
+	<insert id="saveWhiteCompany" useGeneratedKeys="true" keyProperty="vo.id" parameterType="com.hfq.house.manager.entity.model.CompanyWhiteList">
+        insert into t_company_white_config 
+        (f_source, f_app_id, f_company_id, f_white_desc, f_status, f_create_time) 
+       	 values
+        (#{vo.source},#{vo.appId},#{vo.companyId}, #{vo.whiteDesc},#{vo.status},now());
+    </insert>
+    
+    <!-- 房源 -->
+    <update id="updateDetailApproveStatus">
+		UPDATE t_house_base b,
+		 t_house_detail d
+		SET d.f_approve_status = 0
+		WHERE
+			b.f_house_sell_id = d.f_house_sell_id
+		AND b.f_status = 1
+		AND d.f_source = #{source}
+		AND b.f_company_id = #{companyId}
+	</update>
+	
+	<!-- 房间 -->
+	<update id="updateRoomBaseApproveStatus">
+		UPDATE t_house_base b,
+		 t_house_detail d, t_room_base r
+		SET r.f_approve_status = 0
+		WHERE
+			b.f_house_sell_id = d.f_house_sell_id
+		AND r.f_house_sell_id = b.f_house_sell_id
+		AND r.f_status = 1
+		AND d.f_source = #{source}
+		AND b.f_company_id = #{companyId}
+	</update>
+</mapper>

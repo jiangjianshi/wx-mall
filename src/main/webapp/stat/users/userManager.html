@@ -1,0 +1,74 @@
+<#include "../common/include.html"/>
+<title>房间图片审核列表</title>
+<script type="text/javascript" src="${basePath}/stat/users/userManager.js"></script>
+<script type="text/javascript" src="${basePath}/IncJs.a?c=is_valid&c=role_type"></script>
+</head>
+<body class="easyui-layout" data-options="fit:true,border:false">
+	<div id="toolbar" style="display: none;">
+		<form id="searchForm">
+			<table border="0">
+				<tr>
+					<td colspan="2" style="padding-left:5px;"><a id="btn"
+						href="javascript:opt.add();" class="easyui-linkbutton" plain="true"
+						data-options="iconCls:'icon-add'">新增</a>
+						<a id="btn"
+						href="javascript:opt.edit();" class="easyui-linkbutton" plain="true"
+						data-options="iconCls:'icon-edit'" >修改密码</a>
+						<a id="btn"
+						href="javascript:opt.del();" class="easyui-linkbutton" plain="true"
+						data-options="iconCls:'icon-remove'" >停用</a>
+					</td>
+					<td>
+						<div>
+							<div class="datagrid-btn-separator"></div>
+						</div>
+					</td>
+					<td>账号:</td>
+					<td>
+						<input name="account" id="accountSelect" class="easyui-textbox" style="width: 110px;" />
+					</td>
+					<td colspan="2" style="padding-left:5px;"><a id="btn"
+						href="javascript:opt.search();" class="easyui-linkbutton"
+						data-options="iconCls:'icon-search'">查询</a>
+						<a id="btn"
+						href="javascript:opt.resetSearch();" class="easyui-linkbutton"
+						data-options="iconCls:'icon-redo'" style="margin-left:10px;">重置</a>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<div data-options="region:'center',fit:true,border:false">
+		<table id="dataGrid" data-options="fit:true, border:false"></table>
+	</div>
+	
+	<div id="addUser" class="easyui-dialog" style="width:450px; height:300px;" closed="true" buttons="#dlg-buttons">
+    	<form id="addForm">
+    	<center>
+    		<div style="margin-bottom:10px;margin-top:20px">
+                <input name="id" type="hidden">
+                <input name="salt" id="salt" type="hidden">
+                <input id="account" name="account" class="easyui-textbox" label="账号:" data-options="prompt:'请输入邮箱',validType:'email'" required="true" style="width:80%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="role" name="role" class="easyui-textbox" required="true" label="角色:" prompt="请选择角色" style="width:80%">
+            </div>
+			<div style="margin-bottom:10px">
+                <input id="password" name="password" class="easyui-passwordbox" prompt="密码" iconWidth="28" required="true" label="密码:" style="width:80%">
+            </div>
+			<div style="margin-bottom:10px">
+                <input id="confirmPwd" name="confirmPwd" class="easyui-passwordbox" prompt="确认密码" validType="equalTo['#password']" iconWidth="28" required="true" label="确认密码:" style="width:80%">
+            </div>
+            <div style="margin-bottom:10px">
+                <input id="realName" name="realName" class="easyui-textbox" required="true" label="真实姓名:" prompt="真实姓名" style="width:80%">
+            </div>
+    	</center>
+		</form>
+	</div>
+	<!-- 按钮 -->
+	<div id="dlg-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="opt.saveUser()" style="width:90px">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#addUser').dialog('close')" style="width:90px">关闭</a>
+    </div>
+</body>
+</html>

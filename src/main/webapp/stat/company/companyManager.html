@@ -1,0 +1,66 @@
+<#include "../common/include.html"/>
+<title>中介白名单</title>
+<script type="text/javascript" src="${basePath}/stat/company/companyManager.js"></script>
+<script type="text/javascript" src="${basePath}/IncJs.a?c=is_valid&c=role_type"></script>
+</head>
+<body class="easyui-layout" data-options="fit:true,border:false">
+	
+	<!-- grid -->
+	<div data-options="region:'center',fit:true,border:false">
+		<table id="dataGrid" data-options="fit:true, border:false"></table>
+	</div>
+	
+	<div id="toolbar" style="display: none;">
+		<form id="searchForm">
+			<table border="0">
+				<tr>
+					<td colspan="2" style="padding-left:5px;"><a id="btn_n"
+						href="javascript:opt.add();" class="easyui-linkbutton" plain="true"
+						data-options="iconCls:'icon-add'">导入白名单</a>
+						<!-- <a id="btn_w"
+						href="javascript:opt.remove();" class="easyui-linkbutton" plain="true"
+						data-options="iconCls:'icon-remove'" >移除白名单</a> -->
+					</td>
+					<td>
+						<div>
+							<div class="datagrid-btn-separator"></div>
+						</div>
+					</td>
+					<!-- <td>中介名称:</td>
+					<td>
+						<input name="companyName" id="companyName" class="easyui-textbox" style="width: 110px;" />
+					</td> -->
+					<td>中介ID:</td>
+					<td>
+						<input name="companyId" id="companyId" class="easyui-textbox" style="width: 110px;" />
+					</td>
+					<td colspan="2" style="padding-left:5px;"><a id="btn"
+						href="javascript:opt.search();" class="easyui-linkbutton"
+						data-options="iconCls:'icon-search'">查询</a>
+						<a id="btn"
+						href="javascript:opt.resetSearch();" class="easyui-linkbutton"
+						data-options="iconCls:'icon-redo'" style="margin-left:10px;">重置</a>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	
+	<!-- 弹窗 -->
+	<div id="addCompany" class="easyui-dialog" style="width:450px; height:300px;" closed="true" buttons="#dlg-buttons">
+    	<form id="addForm">
+    	<center>
+			<div style="margin-top:10px">
+                <input id="companyIds" name="companyIds" class="easyui-textbox" multiline="true" prompt="请输入中介ID，用英文逗号隔开" required="true" label="中介ID:" style="width:80%; height:200px;">
+            </div>
+    	</center>
+		</form>
+	</div>
+	
+	<!-- 按钮 -->
+	<div id="dlg-buttons">
+        <a href="javascript:void(0)" id="btn_export" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="opt.saveCompany()" style="width:90px">导入</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#addCompany').dialog('close')" style="width:90px">关闭</a>
+    </div>
+</body>
+</html>

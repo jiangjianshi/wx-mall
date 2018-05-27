@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hfq.house.manager.mapper.SysMenuMapper">
+
+
+	<sql id="columns">
+		a.id,
+		a.f_right_name,
+		a.f_right_url,
+		a.f_this_code,
+		a.f_parent_code,
+		a.f_right_order,
+		a.f_right_type,
+		a.f_status,
+		a.f_creat_time,
+		a.f_update_time
+	</sql>
+	<!--查询结果集 -->
+	<resultMap id="beanMap" type="com.hfq.house.manager.entity.model.SysMenu">
+		<result property="id" column="id"/>
+		<result property="rightName" column="f_right_name"/>
+		<result property="rightUrl" column="f_right_url"/>
+		<result property="thisCode" column="f_this_code"/>
+		<result property="parentCode" column="f_parent_code"/>
+		<result property="rightOrder" column="f_right_order"/>
+		<result property="rightType" column="f_right_type"/>
+		<result property="status" column="f_status"/>
+		<result property="creatTime" column="f_creat_time"/>
+		<result property="updateTime" column="f_update_time"/>
+	</resultMap>
+
+	<select id="selectByPrimaryKey" resultMap="beanMap">
+		select
+		<include refid="columns" />
+		from t_sys_menu a
+		where a.id = #{id}
+	</select>
+	
+	
+	<select id="selectUserAllRight" resultMap="beanMap">
+		select m.* from t_sys_user u left join t_sys_role r on
+		u.f_role = r.f_role_code left join t_sys_menu m
+		on r.f_role_right = m.f_this_code
+		where u.id = #{userId} and m.f_status = 1
+	</select>
+
+	<!-- 选择更新 -->
+	<update id="updateSelective" parameterType="com.hfq.house.manager.entity.model.SysMenu">
+		UPDATE t_sys_menu a
+		<trim prefix="set" suffixOverrides=",">
+			<if test="vo.rightName != null"> a.f_right_name = #{vo.rightName},</if>
+			<if test="vo.rightUrl != null"> a.f_right_url = #{vo.rightUrl},</if>
+			<if test="vo.thisCode != null"> a.f_this_code = #{vo.thisCode},</if>
+			<if test="vo.parentCode != null"> a.f_parent_code = #{vo.parentCode},</if>
+			<if test="vo.rightOrder != null"> a.f_right_order = #{vo.rightOrder},</if>
+			<if test="vo.status != null"> a.f_status = #{vo.status},</if>
+			<if test="vo.creatTime != null"> a.f_creat_time = #{vo.creatTime},</if>
+			<if test="vo.updateTime != null"> a.f_update_time = #{vo.updateTime},</if>
+		</trim>
+		WHERE a.id = #{vo.id}
+	</update>
+</mapper>
